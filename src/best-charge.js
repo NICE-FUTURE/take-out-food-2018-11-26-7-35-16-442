@@ -1,3 +1,6 @@
+// var loadAllPromotions = require('./promotions.js');  // 加载优惠信息
+// var loadAllItems = require('./items.js');  // 加载菜品项
+
 function halfPrice(order, tar) {
     //指定菜品半价
     var prom = 0;
@@ -59,8 +62,10 @@ function generateSummary(order, prom) {
 }
 
 function bestCharge(selectedItems) {
-    var promotions = require('./promotions.js')();  // 加载优惠信息
-    var items = require('./items.js')();  // 加载菜品项
+
+    var items = loadAllItems();
+    var promotions = loadPromotions();
+
     var order = generateOrder(selectedItems, items);  // 转换成订单
     
     var prom1 = halfPrice(order, promotions[1].items);  // 检查指定菜品半价优惠
@@ -80,13 +85,13 @@ function bestCharge(selectedItems) {
     return summary;
 }
 
-module.exports = bestCharge;
-
-// let inputs = ["ITEM0001 x 1", "ITEM0013 x 2", "ITEM0022 x 1"];
+let inputs = ["ITEM0001 x 1", "ITEM0013 x 2", "ITEM0022 x 1"];
 // let inputs = ["ITEM0013 x 4", "ITEM0022 x 1"];
 // let inputs = ["ITEM0013 x 4"];
-// let result = bestCharge(inputs).trim();
-// console.log(result);
+let result = bestCharge(inputs).trim();
+console.log(result);
 // for (i of result) {
 //     console.log(i);
 // }
+
+module.exports = bestCharge;
