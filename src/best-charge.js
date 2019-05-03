@@ -1,4 +1,4 @@
-// var loadAllPromotions = require('./promotions.js');  // 加载优惠信息
+// var loadPromotions = require('./promotions.js');  // 加载优惠信息
 // var loadAllItems = require('./items.js');  // 加载菜品项
 
 function bestCharge(selectedItems) {
@@ -16,14 +16,13 @@ function bestCharge(selectedItems) {
 function generateOrder(selectedItems, items) {
     // 生成订单信息
     order = [];
-    for (let ele of selectedItems) {
+    selectedItems.forEach((ele) => {
         pieces = ele.split(' x ');
-        for (let item of items) {
-            if (item.id === pieces[0]) {
+        items.forEach((item) => {
+            if (item.id === pieces[0])
                 order.push({'id': pieces[0], 'count': +pieces[1], 'name': item.name, 'price': item.price});
-            }
-        }
-    }
+        });
+    });
     return order;
 }
 
@@ -31,12 +30,12 @@ function calculatePromotion(order, scale) {
     //指定菜品半价，scale 中的 id 进行半价优惠
     var prom = 0;
     var names = [];
-    order.forEach(function(item) {
-        if (scale.indexOf(item.id) != -1) {
+    order.forEach((item) => {
+        if (scale.includes(item.id)) {
             prom += item.price/2;
             names.push(item.name);
         }
-    })
+    });
     var prom1 = {
         'note': '指定菜品半价('+names.join('，')+')',
         'prom': prom
@@ -44,7 +43,7 @@ function calculatePromotion(order, scale) {
 
     //满减优惠
     var total = 0;
-    order.forEach(function(item) {
+    order.forEach((item) => {
         total += item.price*item.count;
     })
     var prom2 = {
@@ -53,21 +52,17 @@ function calculatePromotion(order, scale) {
     };
 
     //比较两种优惠
-    if (prom1.prom > prom2.prom) {
-        return prom1;
-    } else {
-        return prom2;
-    }
+    return prom1.prom > prom2.prom ? prom1 : prom2; 
 }
 
 function generateSummary(order, prom) {
     // 生成描述
     var total = 0;
     var summary = '============= 订餐明细 =============\n';
-    for (let item of order) {
+    order.forEach((item) => {
         summary += (item.name+' x '+item.count+' = '+item.price*item.count+'元\n');
         total += item.price*item.count;
-    }
+    });
     summary += '-----------------------------------\n';
     if (prom.prom > 0) {
         summary += '使用优惠:\n' + prom.note + '，省' + prom.prom + '元\n';
